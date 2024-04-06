@@ -9,7 +9,10 @@ rm -f *.img
 
 # Download and extract openwrt x86_64 img
 curl -O https://downloads.openwrt.org/releases/23.05.3/targets/x86/64/openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img.gz
+set +o errexit
+# openwrt gz has trailing garbage
 gunzip openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img.gz
+set -o errexit
 
 # Flash the image to disk
 sudo dd if=openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img of=/dev/sda
