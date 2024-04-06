@@ -26,10 +26,10 @@ sudo resize2fs /dev/sda2
 
 #Create files and dirs for openwrt chroot
 sudo mkdir -p /mount/openwrt/{proc,sys,dev}
+sudo mount /dev/sda2 /mount/openwrt
 sudo mount -t proc /proc /mount/openwrt/proc/
 sudo mount --rbind /sys /mount/openwrt/sys/
 sudo mount --rbind /dev /mount/openwrt/dev/
 echo "nameserver 8.8.8.8" > resolv.conf
-sudo mount /dev/sda2 /mount/openwrt
 sudo mkdir -p /mount/openwrt/tmp/lock
 sudo mv resolv.conf /mount/openwrt/tmp/resolv.conf
