@@ -38,6 +38,6 @@ sudo mv resolv.conf /mount/openwrt/tmp/resolv.conf
 sudo chroot /mount/openwrt/ opkg update
 sudo chroot /mount/openwrt/ opkg install dockerd docker luci-app-dockerman
 sudo chroot /mount/openwrt/ wget https://github.com/jerrykuku/luci-theme-argon/releases/download/v1.8.3/luci-theme-argon_1.8.3-20230710_all.ipk -O luci-theme-argon_1.8.3-20230710_all.ipk 
-sudo chroot /mount/openwrt/ opkg install luci-theme-argon*.ipk
+sudo chroot /mount/openwrt/ opkg install luci-theme-argon_1.8.3-20230710_all.ipk
 sudo chroot /mount/openwrt/ wget https://github.com/jerrykuku/luci-app-argon-config/releases/download/v0.9/luci-app-argon-config_0.9_all.ipk -O luci-app-argon-config_0.9_all.ipk
-sudo chroot /mount/openwrt/ opkg install luci-app-argon-config*.ipk
+sudo chroot /mount/openwrt/ opkg install luci-app-argon-config_0.9_all.ipk
