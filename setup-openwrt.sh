@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -o errexit
+set -o nounset
+set -o pipefail
+
 # Remove old img if it exists
 rm -f *.img
 
@@ -18,7 +22,7 @@ sudo growpart /dev/sda 2
 sudo resize2fs /dev/sda2
 
 #Create files and dirs for openwrt chroot
-sudo mkdir -p /mount/openwrt
+sudo mkdir -p /mount/openwrt/{proc,sys,dev}
 sudo mount -t proc /proc /mount/openwrt/proc/
 sudo mount --rbind /sys /mount/openwrt/sys/
 sudo mount --rbind /dev /mount/openwrt/dev/
