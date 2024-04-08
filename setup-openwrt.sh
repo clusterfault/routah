@@ -4,8 +4,27 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit
+fi
+
 # Remove old img if it exists
 rm -f *.img
+
+if mountpoint -q /mount/openwrt/dev; then
+   umount -lf /mount/openwrt/dev
+fi
+if mountpoint -q /mount/openwrt/sys; then
+   umount -lf /mount/openwrt/sys
+fi
+if mountpoint -q /mount/openwrt/proc; then
+   umount -lf /mount/openwrt/proc
+fi
+if mountpoint -q /mount/openwrt; then
+   umount -lf /mount/openwrt
+fi
+
 
 # Download and extract openwrt x86_64 img
 curl -O https://downloads.openwrt.org/releases/23.05.3/targets/x86/64/openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img.gz
@@ -15,27 +34,27 @@ gunzip openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img.gz
 set -o errexit
 
 # Flash the image to disk
-sudo dd if=openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img of=/dev/sda
+ dd if=openwrt-23.05.3-x86-64-generic-ext4-combined-efi.img of=/dev/sda
 
 # Fix partition table
-printf 'p\nw\n' | sudo fdisk /dev/sda
+printf 'p\nw\n' |  fdisk /dev/sda
 
 #Grow root partition to fill the disk
-sudo growpart /dev/sda 2
-sudo resize2fs /dev/sda2
+ growpart /dev/sda 2
+ resize2fs /dev/sda2
 
 #Create files and dirs for openwrt chroot
-sudo mkdir -p /mount/openwrt/{proc,sys,dev}
-sudo mount /dev/sda2 /mount/openwrt
-sudo mount -t proc /proc /mount/openwrt/proc/
-sudo mount --rbind /sys /mount/openwrt/sys/
-sudo mount --rbind /dev /mount/openwrt/dev/
+ mkdir -p /mount/openwrt/{proc,sys,dev}
+ mount /dev/sda2 /mount/openwrt
+ mount -t proc /proc /mount/openwrt/proc/
+ mount --rbind /sys /mount/openwrt/sys/
+ mount --rbind /dev /mount/openwrt/dev/
 echo "nameserver 8.8.8.8" > resolv.conf
-sudo mkdir -p /mount/openwrt/tmp/lock
-sudo mv resolv.conf /mount/openwrt/tmp/resolv.conf
+ mkdir -p /mount/openwrt/tmp/lock
+ mv resolv.conf /mount/openwrt/tmp/resolv.conf
 
 # Install packages in OpenWRT
-sudo chroot /mount/openwrt/ /bin/ash << "EOF"
+ chroot /mount/openwrt/ /bin/ash << "EOF"
 opkg update
 opkg install dockerd docker luci-app-dockerman
 echo "src/gz fantastic_packages_luci https://fantastic-packages.github.io/packages/releases/23.05/packages/x86_64/luci" >> /etc/opkg/customfeeds.conf
